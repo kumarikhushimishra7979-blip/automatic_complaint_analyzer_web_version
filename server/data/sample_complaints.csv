@@ -1,0 +1,31 @@
+ticket_id,customer_region,channel,complaint_description,existing_category
+CMP-2001,North,Web Portal,"Power cut in our area since morning and meter is powered on but home supply is disconnected.",Power supply interruption / meter powered but home disconnected
+CMP-2002,East,Phone,"Bijli nahi aa rahi hai subah se, transformer phase off aur supply band hai.",Power supply interruption / meter powered but home disconnected
+CMP-2003,South,Field App,"बिजली नहीं आ रही है घर में सप्लाई बंद है लेकिन स्मार्ट मीटर चालू है।",Power supply interruption / meter powered but home disconnected
+CMP-2004,West,Mobile App,"Maine 500 rupay ka recharge kiya payment deducted ho gaya par balance update nahi hua.",Recharge/payment made but balance not updated
+CMP-2005,North,Web Portal,"Prepaid UPI recharge payment done successfully yet amount not credited to meter.",Recharge/payment made but balance not updated
+CMP-2006,East,Phone,"रिचार्ज किया पैसा कट गया लेकिन मीटर में बैलेंस अपडेट नहीं हुआ।",Recharge/payment made but balance not updated
+CMP-2007,South,Email,"Bina wajah extra deduction ho raha hai, roz jyada paisa kat gaya balance se.",Unexpected / excess / wrong deduction or billing charges
+CMP-2008,West,Web Portal,"Unexpected excess daily deduction and wrong penalty surcharge deducted.",Unexpected / excess / wrong deduction or billing charges
+CMP-2009,North,Mobile App,"App login nahi ho raha, OTP nahi aa raha aur balance app mein nahi dikha raha.",App login / registration / app data / usage display
+CMP-2010,East,Web Portal,"मोबाइल ऐप लॉगिन नहीं हो रहा है और ओटीपी तथा उपयोग डेटा नहीं दिख रहा।",App login / registration / app data / usage display
+CMP-2011,South,Field App,"Smart meter burnt due to short circuit, display screen is completely blank.",Meter damaged / faulty / display / blank / not working
+CMP-2012,West,Phone,"स्मार्ट मीटर जल गया है और डिस्प्ले स्क्रीन पूरी तरह बंद है।",Meter damaged / faulty / display / blank / not working
+CMP-2013,North,Email,"Is mahine bahut high average bill aaya hai, wrong bill correction karein.",Bill generation / high bill / billing correction
+CMP-2014,East,Web Portal,"इस महीने बिजली का बिल बहुत ज्यादा आया है कृपया बिलिंग सुधार करें।",Bill generation / high bill / billing correction
+CMP-2015,South,Field App,"Meter offline dikha raha hai aur signal network issue se not communicating.",Meter not communicating
+CMP-2016,West,Phone,"स्मार्ट मीटर सर्वर से कम्युनिकेट नहीं कर रहा है और ऑफलाइन दिखा रहा है।",Meter not communicating
+CMP-2017,North,SMS,"Mobile par recharge aur bill SMS nahi aata, notification band hai.",SMS / bill message / notification not received
+CMP-2018,East,Phone,"पंजीकृत मोबाइल नंबर पर बिजली बिल और अलर्ट का एसएमएस नहीं आ रहा है।",SMS / bill message / notification not received
+CMP-2019,South,Web Portal,"Meter reading update nahi ho rahi hai aur daily unit consumption zero dikha raha hai.",Meter reading / consumption / deduction not happening
+CMP-2020,West,Email,"Sanction load change karwana hai 2 KW se 5 KW load increase application.",Load change / load increase or decrease
+CMP-2021,North,Field App,"Meter shift karwana hai aur wrong meter mapped hai mere consumer ID par.",Meter shifting / seal / replacement / wrong meter
+CMP-2022,East,Web Portal,"Mukhyamantri free electricity 125 unit subsidy bill mein apply nahi hui.",Free electricity / subsidy / free units
+CMP-2023,South,Email,"Purana arrear aur previous payment adjust nahi hua hai dues mismatch dikh raha.",Previous payment/arrears/incorrect payment adjustment
+CMP-2024,West,Phone,"IVRS attached please check and call back.",Other / unclear / incomplete
+CMP-2025,North,Email,"",
+CMP-2026,East,Web Portal,"   ",
+CMP-2027,South,Field App,"Solar rooftop net-metering export credit telemetry lagging on substation feeder.",
+CMP-2028,West,Field App,"Solar rooftop net-metering export readings missing from monthly export credit.",
+CMP-2029,North,Field App,"Solar rooftop net-metering inverter export sync failing every evening.",
+CMP-2030,East,Phone,"Biometric kiosk payment receipt printer jammed at division counter.",

@@ -1,0 +1,6 @@
+{
+  "name": "Automatic Customer Complaint Analysis System",
+  "description": "Enterprise full-stack platform for automated customer complaint classification, emerging complaint group discovery, analytical reporting, and Excel/PDF export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

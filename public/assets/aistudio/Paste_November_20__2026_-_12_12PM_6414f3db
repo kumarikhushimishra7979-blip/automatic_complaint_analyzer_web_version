@@ -1,0 +1,1460 @@
+PROJECT MASTER DEVELOPMENT PROMPT
+
+Automatic Customer Complaint Analysis – Full-Stack Web Application
+
+1. Project Overview
+
+Develop a complete, professional, secure, and responsive web-based application named:
+
+Automatic Customer Complaint Analysis System
+
+The purpose of this application is to automatically analyze customer complaints, identify the nature of each complaint, classify complaints into appropriate categories using an existing Machine Learning model, discover potential new complaint groups, and generate analytical summaries and downloadable reports.
+
+The application is intended for organizational use by authorized employees and administrators. Multiple registered users should be able to access the application through a shared web server using individual accounts.
+
+The application must replace the existing local Streamlit interface with a modern full-stack web application.
+
+The application must be completely developed and tested before deployment.
+
+Important scope restriction: Do not deploy the application to any external server. The teacher will independently handle server configuration and deployment. The development deliverables must include a complete application, source code, database migrations, user manual, and deployment manual.
+
+---
+
+2. Technology Stack
+
+Use the following technologies.
+
+Frontend
+
+- React.js
+- Vite
+- JavaScript (JSX)
+- HTML5
+- CSS3
+- Axios for API communication
+- React Router DOM for navigation
+- Native SVG/CSS charts or a suitable charting library
+
+Backend
+
+- Python
+- FastAPI
+- SQLAlchemy ORM
+- Pydantic
+- Uvicorn
+- JWT-based authentication
+- Password hashing using a secure password-hashing library
+
+Database
+
+- PostgreSQL
+- Alembic for database migrations
+
+Machine Learning and Data Processing
+
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Sentence Transformers
+- Joblib
+- KMeans clustering
+- Cosine similarity
+
+Reporting
+
+- OpenPyXL for Excel reports
+- ReportLab for PDF reports
+
+Development Environment
+
+- Visual Studio Code
+- Python virtual environment
+- Node.js and npm
+- PostgreSQL
+
+Do not introduce unnecessary paid APIs, cloud services, or external AI APIs.
+
+The application must work using the existing trained ML model and locally available model dependencies.
+
+---
+
+3. Main Application Requirements
+
+The application must contain the following modules:
+
+1. User Authentication
+2. Dashboard
+3. Dataset Management
+4. Dataset Preview and Column Configuration
+5. Automatic Complaint Analysis
+6. Complaint Classification
+7. Potential New Complaint Group Discovery
+8. Analysis Progress Tracking
+9. Analysis History
+10. Analytical Dashboard and Statistics
+11. Report Generation
+12. Excel and PDF Downloads
+13. User Account Management
+14. Error Handling and Security
+
+All modules must be integrated into one application.
+
+---
+
+4. User Authentication Module
+
+Implement secure user registration and login.
+
+Registration
+
+Users should be able to register with:
+
+- Username
+- Email address
+- Password
+- Confirm password
+
+Requirements:
+
+- Validate all required fields.
+- Validate email format.
+- Prevent duplicate email registrations.
+- Enforce reasonable password-strength requirements.
+- Hash passwords before storing them.
+- Never store plain-text passwords.
+
+Login
+
+Users should log in using their registered credentials.
+
+Requirements:
+
+- Validate login credentials.
+- Generate a JWT access token.
+- Store authentication information securely on the frontend.
+- Include authentication tokens in protected API requests.
+- Automatically handle expired or invalid tokens.
+- Redirect unauthenticated users to the login page.
+
+Logout
+
+- Clear authentication information.
+- Redirect users to the login page.
+
+Authorization
+
+Users must only access their own datasets, analyses, and reports.
+
+One user's uploaded files and analysis results must never be accessible to another user unless an explicit administrator-sharing feature is implemented in the future.
+
+---
+
+5. Dashboard Module
+
+Create a professional dashboard that provides an overview of the user's activities.
+
+Dashboard Statistics
+
+Display:
+
+- Total uploaded datasets
+- Total complaints across uploaded datasets
+- Number of completed analyses
+- Number of available reports
+- Number of failed or currently processing analyses, where appropriate
+
+Quick Actions
+
+Provide navigation cards for:
+
+- Manage Datasets
+- Analyze Complaints
+- Analysis History
+- Reports and Downloads
+
+Recent Datasets
+
+Display a table containing:
+
+- Dataset name
+- Total rows
+- Upload date
+- File format
+
+Provide a View All button that redirects to Dataset Management.
+
+Dashboard Design
+
+The dashboard should have:
+
+- Modern card-based layout
+- Clear typography
+- Consistent spacing
+- Professional color palette
+- Responsive design
+- Loading indicators
+- Error messages
+- Empty states
+
+Dashboard statistics must come from actual database records, not hardcoded values.
+
+---
+
+6. Dataset Management Module
+
+Users must be able to upload complaint datasets.
+
+Supported File Formats
+
+- Excel (.xlsx)
+- CSV (.csv)
+
+Upload Requirements
+
+- Provide a clear file upload interface.
+- Support large files within a configurable size limit.
+- Validate file extensions and file content.
+- Reject unsupported or corrupted files.
+- Prevent unsafe filenames and path traversal.
+- Store uploaded files securely.
+- Associate every dataset with its owner.
+- Record upload date, filename, and total row count.
+
+The application must provide meaningful upload success and error messages.
+
+Dataset Listing
+
+Display uploaded datasets in a table with:
+
+- Dataset ID
+- Filename
+- File type
+- Total rows
+- Upload date
+- Configuration status
+- Available actions
+
+Dataset Actions
+
+- Preview dataset
+- Configure columns
+- View dataset information
+
+Do not allow users to access another user's dataset.
+
+---
+
+7. Dataset Preview and Column Configuration
+
+After uploading a dataset, users must be able to preview its contents.
+
+Preview Requirements
+
+- Display the column headers.
+- Display the first 10 rows.
+- Handle large datasets without loading the entire dataset into the browser.
+- Display empty or missing values appropriately.
+
+Column Configuration
+
+Allow users to select:
+
+Complaint Text Column
+
+- The column containing customer complaint descriptions.
+
+Existing Category Column (Optional)
+
+- The column containing previously assigned complaint categories.
+
+The complaint text column is mandatory for analysis.
+
+The category column is optional for prediction-only analysis.
+
+Save the selected column configuration in the database.
+
+Validate selected column names against the uploaded file.
+
+---
+
+8. Automatic Complaint Analysis Module
+
+This is the primary functionality of the application.
+
+Users should be able to select a previously uploaded dataset and initiate automatic complaint analysis.
+
+Analysis Workflow
+
+1. User selects a dataset.
+2. Application verifies the dataset configuration.
+3. Application retrieves the complaint text column.
+4. The backend loads the existing trained ML model.
+5. Complaints are processed in manageable batches.
+6. The ML model predicts complaint categories.
+7. The system calculates prediction confidence.
+8. Low-confidence complaints are flagged for review.
+9. Potential new complaint groups are identified.
+10. Results are saved in PostgreSQL.
+11. Analysis status is updated.
+12. The frontend displays the completed analysis.
+
+Important Requirements
+
+- Reuse the existing trained model.
+- Do not train a new model automatically during normal prediction.
+- Do not use paid AI APIs.
+- Do not send confidential customer complaints to external services.
+- Use batch processing to control memory consumption.
+- Handle large datasets efficiently.
+- Preserve the original uploaded dataset.
+- Prevent accidental duplicate execution of the same active analysis.
+- Maintain analysis ownership.
+
+Analysis Status
+
+Support:
+
+- Pending
+- Processing
+- Completed
+- Failed
+
+Display progress information while analysis is running.
+
+Provide useful error messages when analysis fails.
+
+Where possible, retain valid partial results and clearly identify failed analyses.
+
+---
+
+9. Machine Learning Classification Module
+
+Use the existing trained machine learning model and its associated preprocessing pipeline.
+
+The existing project uses:
+
+- Sentence Transformer: all-MiniLM-L6-v2
+- Logistic Regression classifier
+- Confidence-based classification
+- Cosine similarity
+- KMeans clustering
+
+The trained model artifact must be loaded from the local backend model directory.
+
+Classification Requirements
+
+For each complaint, generate:
+
+- Original complaint text
+- Predicted complaint category
+- Prediction confidence
+- Classification status
+- Review requirement
+- Candidate group, if applicable
+
+Classification Status
+
+Support the following statuses:
+
+Classified
+The complaint has received a prediction with sufficient confidence.
+
+Review
+The prediction confidence is below the configured threshold, and human verification is recommended.
+
+Empty Text
+The complaint description is empty or contains no meaningful text.
+
+Confidence Score
+
+Display confidence as a percentage in the frontend.
+
+Example:
+
+92.5%
+
+Use the existing model's actual confidence output. Do not fabricate confidence scores.
+
+Review Threshold
+
+Maintain a configurable confidence threshold.
+
+Use the existing threshold of 0.40 as the initial default unless model validation justifies changing it.
+
+Important ML Requirements
+
+- Maintain compatibility with the existing model artifact.
+- Preserve preprocessing consistency between training and prediction.
+- Avoid changing model behavior without testing.
+- Handle empty text and missing values.
+- Ensure output rows correspond correctly to input rows.
+- Handle exceptions without silently losing complaints.
+
+---
+
+10. Potential New Complaint Group Discovery
+
+The application should identify groups of similar complaints that may represent emerging or previously unseen complaint categories.
+
+This is an important feature.
+
+Do not simply classify every uncertain complaint as "Ambiguous."
+
+Use the existing clustering and similarity-based logic to identify candidate groups.
+
+Requirements
+
+- Analyze complaints requiring review.
+- Group semantically similar complaints.
+- Use KMeans and the existing embedding approach where appropriate.
+- Respect a configurable minimum cluster size.
+- Assign candidate group identifiers.
+- Leave the candidate group empty for complaints that do not belong to a meaningful cluster.
+- Preserve the original result ordering.
+- Ensure the number of generated candidate-group values matches the number of input complaints.
+
+Example
+
+Suppose the system identifies these complaints:
+
+- Smart meter display is not working.
+- Smart meter screen is blank.
+- Smart meter display has stopped functioning.
+
+These complaints may be grouped as a potential candidate group.
+
+Display candidate groups as suggestions requiring human verification.
+
+Important: A candidate group must not automatically become an officially approved complaint category. It is a discovery suggestion, not a confirmed classification.
+
+---
+
+11. Analysis Results Interface
+
+After analysis, display the results in a professional table.
+
+Required Columns
+
+- Serial Number
+- Complaint Description
+- Predicted Category
+- Confidence Score
+- Classification Status
+- Candidate Group
+
+Table Features
+
+- Pagination
+- Configurable page size
+- Search or filtering where practical
+- Horizontal scrolling for smaller screens
+- Loading indicators
+- Empty-result messages
+
+Filtering
+
+Where feasible, provide filters for:
+
+- Predicted category
+- Classification status
+- Review-required complaints
+- Candidate group
+
+Review Indicators
+
+Clearly distinguish:
+
+- Successfully classified complaints
+- Complaints requiring manual review
+- Empty complaint descriptions
+
+Use appropriate status badges.
+
+---
+
+12. Analytical Statistics Module
+
+After analysis, display a statistical summary.
+
+Statistics must be calculated from actual saved analysis results.
+
+Summary Cards
+
+Display:
+
+- Total complaints processed
+- Successfully classified complaints
+- Complaints requiring review
+- Empty complaint descriptions
+- Number of predicted categories
+- Number of candidate groups
+
+Category-wise Summary
+
+Create a summary containing:
+
+Category| Complaint Count| Percentage
+
+Calculate:
+
+Percentage = (Category Complaint Count / Total Eligible Complaints) × 100
+
+Clearly define the denominator used for percentages.
+
+Do not include empty descriptions as a predicted complaint category.
+
+Charts
+
+Provide:
+
+1. Horizontal bar chart showing complaint counts by predicted category.
+2. Category-wise percentage distribution.
+3. Classification status distribution.
+4. Review-required complaint distribution.
+
+Charts must:
+
+- Use real analysis data.
+- Display readable labels.
+- Handle many categories.
+- Support responsive layouts.
+- Avoid misleading visual representations.
+
+The horizontal bar chart should be suitable for inclusion in PDF reports.
+
+---
+
+13. Analysis History Module
+
+Maintain a history of all analyses performed by each user.
+
+History Table
+
+Display:
+
+- Analysis ID
+- Dataset name
+- Total complaints
+- Analysis status
+- Started date
+- Completed date
+- Available actions
+
+Features
+
+- View analysis results.
+- View progress for active analyses.
+- View completed analyses.
+- Identify failed analyses.
+- Navigate through paginated history.
+
+History must be retrieved from the database.
+
+Users must not access analyses belonging to other users.
+
+---
+
+14. Reports and Downloads Module
+
+Generate professional downloadable reports for completed analyses.
+
+Provide two formats:
+
+1. Excel (.xlsx)
+2. PDF (.pdf)
+
+Excel Report
+
+The Excel report should contain the following worksheets.
+
+Worksheet 1: Complaint Results
+
+Include:
+
+- Original complaint text
+- Predicted category
+- Confidence score
+- Classification status
+- Review requirement
+- Candidate group
+
+Preserve other original dataset columns where feasible and correctly aligned with the prediction results.
+
+Worksheet 2: Category Summary
+
+Include:
+
+- Category name
+- Complaint count
+- Percentage
+
+Worksheet 3: Report Information
+
+Include:
+
+- Analysis ID
+- Dataset ID
+- Dataset filename
+- Report generation date
+- Total complaints processed
+- Successfully classified complaints
+- Review-required complaints
+- Empty complaints
+
+Excel Formatting
+
+- Professional worksheet names
+- Bold column headings
+- Appropriate column widths
+- Filters
+- Frozen header rows
+- Readable formatting
+- Formula-injection protection
+
+PDF Report
+
+Generate a professional PDF report containing:
+
+Section 1: Report Header
+
+- Application name
+- Report title
+- Analysis ID
+- Dataset name
+- Report generation date
+
+Section 2: Summary Statistics
+
+- Total complaints
+- Classified complaints
+- Review-required complaints
+- Empty complaints
+
+Section 3: Category-wise Analysis
+
+- Category name
+- Complaint count
+- Percentage
+
+Section 4: Visualization
+
+- Horizontal bar chart showing category-wise complaint counts.
+
+Section 5: Detailed Results
+
+- Complaint description
+- Predicted category
+- Confidence score
+- Review status
+- Candidate group
+
+PDF Formatting
+
+- Professional layout
+- Landscape orientation where required
+- Readable fonts
+- Proper table formatting
+- Page numbers
+- Repeated table headers
+- Appropriate margins
+- Text wrapping for long complaint descriptions
+
+Both reports must be generated from saved database results and the corresponding original dataset.
+
+Only completed analyses should be available for report downloads.
+
+---
+
+15. User Interface and Design Requirements
+
+The application must have a consistent, modern, professional interface.
+
+Overall Design
+
+Use a professional enterprise dashboard design.
+
+Suggested visual style:
+
+- Dark navy sidebar
+- White content cards
+- Light neutral page background
+- Purple or blue primary accent
+- Green for success
+- Orange for warnings
+- Red for errors
+
+Sidebar Navigation
+
+Include:
+
+- Dashboard
+- Dataset Management
+- Complaint Analysis
+- Analysis History
+- Reports and Downloads
+- Logout
+
+The navigation must remain consistent across authenticated pages.
+
+Shared Components
+
+Create reusable components for:
+
+- Sidebar
+- Page header
+- Navigation links
+- Statistics cards
+- Buttons
+- Tables
+- Status badges
+- Loading indicators
+- Error notifications
+- Empty states
+- Pagination
+
+Responsive Design
+
+Support:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+The application must not break on smaller screen sizes.
+
+UI Quality
+
+- Avoid corrupted Unicode icons.
+- Use consistent SVG icons or a suitable icon library.
+- Avoid excessive animations.
+- Maintain consistent spacing.
+- Ensure readable typography.
+- Provide hover and focus states.
+- Maintain keyboard accessibility.
+- Use meaningful error messages.
+
+Do not create a separate sidebar or navigation layout inside individual pages. Use the shared application layout.
+
+---
+
+16. Backend API Requirements
+
+Use RESTful API endpoints with a consistent "/api" prefix.
+
+Suggested endpoint structure:
+
+Authentication
+
+- POST "/api/auth/register"
+- POST "/api/auth/login"
+- GET "/api/auth/me"
+
+Datasets
+
+- POST "/api/datasets/upload"
+- GET "/api/datasets"
+- GET "/api/datasets/{dataset_id}"
+- GET "/api/datasets/{dataset_id}/preview"
+- PUT "/api/datasets/{dataset_id}/columns"
+- DELETE "/api/datasets/{dataset_id}" (only if safe deletion is fully implemented)
+
+Analysis
+
+- POST "/api/analyses/{dataset_id}/run"
+- GET "/api/analyses"
+- GET "/api/analyses/{analysis_id}"
+- GET "/api/analyses/{analysis_id}/progress"
+- GET "/api/analyses/{analysis_id}/results"
+- GET "/api/analyses/{analysis_id}/statistics"
+
+Reports
+
+- GET "/api/reports/{analysis_id}/excel"
+- GET "/api/reports/{analysis_id}/pdf"
+
+Health
+
+- GET "/api/health"
+
+The final endpoint implementation must remain consistent between frontend and backend.
+
+Use:
+
+- Proper HTTP status codes
+- Pydantic request/response validation
+- Consistent JSON responses
+- Meaningful error messages
+- Authentication dependencies
+- Database transactions
+- Pagination for large result sets
+
+Do not expose internal server paths, passwords, tokens, or stack traces to users.
+
+---
+
+17. Database Requirements
+
+Use PostgreSQL with SQLAlchemy.
+
+Implement appropriate relational tables.
+
+Users
+
+Fields:
+
+- id
+- username
+- email
+- password_hash
+- is_active
+- created_at
+
+Datasets
+
+Fields:
+
+- id
+- user_id
+- filename
+- storage_path
+- total_rows
+- uploaded_at
+- complaint_column
+- category_column
+
+Analyses
+
+Fields:
+
+- id
+- user_id
+- dataset_id
+- analysis_status
+- total_complaints
+- started_at
+- completed_at
+
+Complaint Results
+
+Fields:
+
+- id
+- analysis_id
+- complaint_text
+- predicted_category
+- confidence_score
+- needs_review
+- candidate_group
+- created_at
+
+Categories
+
+Maintain the category table if it is required for future category management.
+
+Database Requirements
+
+- Use primary keys and foreign keys.
+- Enforce referential integrity.
+- Add indexes for commonly queried fields.
+- Use appropriate data types.
+- Maintain user ownership.
+- Handle database transactions correctly.
+- Avoid duplicate or orphaned records.
+- Support database migrations.
+
+Use Alembic to maintain database schema changes.
+
+Never require users to manually create database tables through SQL scripts when migrations can perform the task.
+
+---
+
+18. Security and Confidentiality Requirements
+
+The dataset may contain confidential customer information.
+
+Security is therefore a major requirement.
+
+Implement:
+
+1. JWT authentication.
+2. Secure password hashing.
+3. User-level authorization.
+4. Protected API endpoints.
+5. File upload validation.
+6. Secure filename handling.
+7. Protection against path traversal.
+8. SQL injection protection through ORM usage.
+9. Excel formula-injection protection.
+10. Safe error handling.
+11. Environment-variable-based configuration.
+12. Restricted CORS configuration.
+13. Secure file storage.
+14. No hardcoded passwords or API keys.
+15. No customer complaint data in application logs.
+
+Do not send customer data to external AI services or third-party processing APIs.
+
+The application should operate within the organization's own infrastructure.
+
+---
+
+19. Performance and Reliability Requirements
+
+The application must be designed for practical organizational usage.
+
+Large Dataset Handling
+
+- Avoid loading entire large datasets into frontend memory.
+- Use backend batch processing.
+- Use pagination for result tables.
+- Use chunk-based CSV processing.
+- Use efficient database inserts.
+- Avoid unnecessary repeated model loading.
+- Cache the loaded model appropriately.
+- Avoid excessive database queries.
+
+Analysis Execution
+
+The analysis process should not block ordinary API requests.
+
+For the initial deployment-ready implementation, use the existing background-processing architecture if appropriate.
+
+Clearly document its limitations.
+
+If durable background job processing is introduced, use an appropriate queue system only when justified.
+
+Error Handling
+
+Handle:
+
+- Invalid files
+- Missing columns
+- Empty datasets
+- Empty complaint text
+- Model loading failures
+- Prediction failures
+- Database connection errors
+- Report generation failures
+- Interrupted analyses
+
+Errors should be logged safely without exposing confidential complaint information.
+
+---
+
+20. Testing Requirements
+
+The application must be tested before delivery.
+
+Backend Tests
+
+Test:
+
+- User registration
+- Login
+- Authentication
+- User authorization
+- Dataset upload
+- Dataset validation
+- Dataset preview
+- Column configuration
+- Analysis execution
+- ML prediction
+- Candidate group generation
+- Progress tracking
+- Result pagination
+- Statistical calculations
+- Excel generation
+- PDF generation
+
+ML Tests
+
+Test:
+
+- Valid complaint predictions
+- Empty complaint text
+- Missing values
+- Low-confidence predictions
+- Candidate group discovery
+- Output length consistency
+- Batch processing
+
+Frontend Tests
+
+Test:
+
+- Login and registration forms
+- Protected navigation
+- Dashboard loading
+- Dataset upload
+- Preview and column selection
+- Analysis initiation
+- Progress updates
+- Results pagination
+- Analysis history
+- Excel downloads
+- PDF downloads
+- Responsive layouts
+
+Integration Testing
+
+Verify that:
+
+- Frontend APIs communicate correctly with FastAPI.
+- Backend communicates correctly with PostgreSQL.
+- Model loading works.
+- Results are saved correctly.
+- Report data matches database records.
+- Different users cannot access each other's data.
+
+Final Verification
+
+Run:
+
+- Backend tests
+- Frontend production build
+- Python dependency checks
+- Database migration checks
+- API endpoint checks
+
+Do not claim the application is fully tested unless the tests have actually been executed.
+
+---
+
+21. Required Project Directory Structure
+
+Use a clean, maintainable directory structure similar to the following.
+
+Automatic-Customer-Complaint-Analysis-Web/
+
+│
+├── backend/
+│   │
+│   ├── main.py
+│   ├── database.py
+│   ├── models.py
+│   ├── schemas.py
+│   ├── security.py
+│   ├── config.py
+│   ├── requirements.txt
+│   ├── .env.example
+│   │
+│   ├── api/
+│   │   ├── init.py
+│   │   ├── auth.py
+│   │   ├── datasets.py
+│   │   ├── analyses.py
+│   │   └── reports.py
+│   │
+│   ├── ml/
+│   │   ├── init.py
+│   │   ├── modeling.py
+│   │   ├── ml_service.py
+│   │   ├── model_loader.py
+│   │   └── models/
+│   │       └── README.md
+│   │
+│   ├── reporting/
+│   │   ├── init.py
+│   │   └── report_service.py
+│   │
+│   ├── services/
+│   │   ├── init.py
+│   │   ├── dataset_service.py
+│   │   ├── analysis_service.py
+│   │   └── statistics_service.py
+│   │
+│   ├── utils/
+│   │   ├── init.py
+│   │   ├── file_utils.py
+│   │   ├── validation.py
+│   │   └── logging_config.py
+│   │
+│   ├── migrations/
+│   │   ├── env.py
+│   │   ├── script.py.mako
+│   │   └── versions/
+│   │
+│   ├── tests/
+│   │   ├── init.py
+│   │   ├── test_auth.py
+│   │   ├── test_datasets.py
+│   │   ├── test_analysis.py
+│   │   ├── test_ml_service.py
+│   │   ├── test_statistics.py
+│   │   └── test_reports.py
+│   │
+│   └── uploads/
+│       └── .gitkeep
+│
+├── frontend/
+│   │
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── vite.config.js
+│   ├── index.html
+│   │
+│   ├── public/
+│   │   └── favicon.svg
+│   │
+│   └── src/
+│       │
+│       ├── main.jsx
+│       ├── App.jsx
+│       ├── App.css
+│       ├── index.css
+│       │
+│       ├── components/
+│       │   ├── AppLayout.jsx
+│       │   ├── AppLayout.css
+│       │   ├── PageHeader.jsx
+│       │   ├── PageHeader.css
+│       │   ├── Sidebar.jsx
+│       │   ├── StatCard.jsx
+│       │   ├── DataTable.jsx
+│       │   ├── StatusBadge.jsx
+│       │   ├── LoadingSpinner.jsx
+│       │   ├── EmptyState.jsx
+│       │   └── Pagination.jsx
+│       │
+│       ├── pages/
+│       │   ├── Login.jsx
+│       │   ├── Register.jsx
+│       │   ├── Dashboard.jsx
+│       │   ├── Datasets.jsx
+│       │   ├── Analysis.jsx
+│       │   ├── AnalysisHistory.jsx
+│       │   └── Reports.jsx
+│       │
+│       ├── services/
+│       │   └── api.js
+│       │
+│       ├── hooks/
+│       │   └── useAuth.js
+│       │
+│       └── utils/
+│           ├── formatters.js
+│           └── validators.js
+│
+├── database/
+│   └── README.md
+│
+├── docs/
+│   ├── user_manual.md
+│   ├── deployment_manual.md
+│   ├── system_architecture.md
+│   ├── api_documentation.md
+│   └── database_documentation.md
+│
+├── deployment/
+│   ├── README.md
+│   └── .gitkeep
+│
+├── tests/
+│   └── README.md
+│
+├── .gitignore
+├── README.md
+└── LICENSE
+
+This is the target organizational structure, not an instruction to blindly recreate or rename every existing file.
+
+Preserve working existing files and functionality. Add new modules only where they provide a clear architectural benefit.
+
+Do not create duplicate implementations of existing functionality.
+
+---
+
+22. Required Documentation
+
+The following documents are mandatory deliverables.
+
+A. README.md
+
+Include:
+
+- Project overview
+- Main features
+- Technology stack
+- Architecture overview
+- Prerequisites
+- Installation instructions
+- Backend setup
+- Frontend setup
+- Database setup
+- Environment configuration
+- How to run the application locally
+- How to execute tests
+- Known limitations
+
+B. User Manual – docs/user_manual.md
+
+Write a detailed guide for ordinary application users.
+
+Include:
+
+1. Introduction
+2. System requirements
+3. Accessing the application
+4. Creating an account
+5. Logging in
+6. Understanding the dashboard
+7. Uploading datasets
+8. Previewing uploaded datasets
+9. Selecting complaint columns
+10. Starting complaint analysis
+11. Understanding classification results
+12. Understanding confidence scores
+13. Understanding review-required complaints
+14. Understanding candidate groups
+15. Viewing analysis statistics
+16. Viewing analysis history
+17. Downloading Excel reports
+18. Downloading PDF reports
+19. Logging out
+20. Common errors and troubleshooting
+
+Use simple language suitable for non-technical employees.
+
+Include screenshots or clearly marked screenshot placeholders where appropriate.
+
+C. Deployment Manual – docs/deployment_manual.md
+
+This manual is intended for the teacher or system administrator.
+
+Do not actually deploy the application.
+
+Explain how the administrator can deploy it on their own Linux server.
+
+Include:
+
+1. Server prerequisites
+2. Required software
+3. PostgreSQL installation and configuration
+4. Database and user creation
+5. Python installation
+6. Backend environment setup
+7. Python dependency installation
+8. Environment-variable configuration
+9. ML model artifact placement
+10. Frontend dependency installation
+11. Frontend production build
+12. Nginx configuration
+13. FastAPI and Uvicorn configuration
+14. Systemd service configuration
+15. File storage permissions
+16. Database migrations
+17. HTTPS configuration
+18. Firewall and network configuration
+19. Backup and recovery
+20. Application logging
+21. Restarting the application
+22. Updating the application
+23. Troubleshooting
+
+Provide example configuration files where useful.
+
+Clearly distinguish development settings from production settings.
+
+Never include actual passwords, private keys, or real credentials in the manual.
+
+D. System Architecture Documentation
+
+Explain:
+
+- Frontend architecture
+- Backend architecture
+- API communication
+- Database relationships
+- ML inference workflow
+- Candidate group discovery
+- Report generation workflow
+- File storage
+- Authentication and authorization
+
+Use diagrams where useful.
+
+E. API Documentation
+
+Document:
+
+- Endpoint
+- HTTP method
+- Authentication requirement
+- Request parameters
+- Request body
+- Response structure
+- Possible error responses
+
+FastAPI Swagger documentation should also be available.
+
+F. Database Documentation
+
+Document:
+
+- Table names
+- Columns
+- Relationships
+- Foreign keys
+- Indexes
+- Migration process
+
+---
+
+23. Configuration and Environment Management
+
+Use environment variables for sensitive configuration.
+
+Provide:
+
+backend/.env.example
+
+Include placeholders for:
+
+- DATABASE_URL
+- SECRET_KEY
+- ACCESS_TOKEN_EXPIRE_MINUTES
+- UPLOAD_DIR
+- MAX_UPLOAD_SIZE
+- CORS_ORIGINS
+- MODEL_PATH
+
+Provide a frontend environment example if needed:
+
+frontend/.env.example
+
+Include:
+
+- VITE_API_BASE_URL
+
+Never commit actual ".env" files.
+
+The application must not depend on hardcoded localhost URLs in production.
+
+---
+
+24. Git and Repository Requirements
+
+Prepare the repository for future maintenance.
+
+The ".gitignore" file must exclude:
+
+- Python virtual environments
+- node_modules
+- .env files
+- Python cache files
+- Temporary uploads
+- Customer datasets
+- Private model artifacts
+- Generated reports
+- Build output where appropriate
+- IDE-specific temporary files
+
+Do not upload confidential customer information or credentials to GitHub.
+
+Provide clear installation instructions so another developer can clone the repository and configure it independently.
+
+---
+
+25. Final Deliverables
+
+The project is considered complete only when the following deliverables are available.
+
+Application Source Code
+
+- Complete React frontend
+- Complete FastAPI backend
+- PostgreSQL database integration
+- Alembic migrations
+- ML integration
+- Report generation
+- Authentication and authorization
+- Tests
+
+Documentation
+
+- README.md
+- User Manual
+- Deployment Manual
+- System Architecture Documentation
+- API Documentation
+- Database Documentation
+
+Configuration
+
+- Backend .env.example
+- Frontend .env.example, if needed
+- Requirements file
+- package.json and package-lock.json
+- .gitignore
+
+Verification
+
+- Backend tests executed
+- Frontend production build successful
+- Database migrations verified
+- API endpoints tested
+- Authentication tested
+- ML predictions tested
+- Excel report tested
+- PDF report tested
+- Multi-user data isolation tested
+
+Final ZIP
+
+Prepare a clean source-code ZIP containing all required application files and documentation.
+
+Exclude:
+
+- Actual environment files
+- Passwords and credentials
+- Confidential customer datasets
+- Virtual environments
+- node_modules
+- Temporary files
+- Generated reports
+- Private model artifacts unless explicitly approved for secure transfer
+
+Document separately how the administrator must obtain and place the trained model artifact.
+
+---
+
+26. Development Instructions and Constraints
+
+Follow these instructions throughout development.
+
+1. Build the application incrementally.
+2. Inspect existing source code before modifying it.
+3. Preserve working functionality.
+4. Do not replace the existing ML model without explicit approval.
+5. Do not change database schemas without creating appropriate Alembic migrations.
+6. Do not invent API endpoints or database fields without implementing them.
+7. Keep frontend and backend API contracts synchronized.
+8. Do not hardcode dummy statistics.
+9. Do not use simulated analysis results in the actual application.
+10. Do not expose confidential complaint information.
+11. Do not introduce unnecessary dependencies.
+12. Avoid duplicate components and duplicate business logic.
+13. Provide complete replacement files when changes are necessary.
+14. Specify the exact path of every modified or newly created file.
+15. Explain terminal commands and where to execute them.
+16. Run tests after significant changes.
+17. Verify that existing features continue working.
+18. Maintain a clear separation between frontend, backend, database, ML, and reporting logic.
+19. Do not perform actual server deployment.
+20. Finish the complete application and documentation before declaring the project ready for handover.
+
+When the development is finished, provide a final handover summary containing:
+
+- Implemented features
+- Project directory structure
+- Required software
+- Local execution instructions
+- Testing results
+- Known limitations
+- User manual location
+- Deployment manual location
+- Final source ZIP location
+
+The final objective is to deliver a complete, functional, secure, maintainable, and deployment-ready Automatic Customer Complaint Analysis Web Application that the teacher can independently deploy and administer on their own server.
