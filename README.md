@@ -1,67 +1,113 @@
-# Automatic Customer Complaint Analysis System
+# Customer Complaint Analysis System
+A full-stack web application built with React, Vite, Tailwind CSS, and a TypeScript backend (`server.ts`).
 
-A complete, secure, full-stack web application for automated organizational customer complaint classification, low-confidence review flagging, emerging complaint group discovery (KMeans clustering + cosine similarity), analytical visualization, and Excel/PDF reporting.
+## Prerequisites on Linux
 
-## Main Features
+- **Git** (`git`)
+- **Runtime:** [Bun](https://bun.sh/) (recommended, as `bun.lock` is included) **or** **Node.js** (v18+ or v20+)
+- **API Key:** A valid `GEMINI_API_KEY` (if Gemini AI features are enabled)
 
-- **User Authentication & Multi-User Isolation**: Registration, password strength enforcement, bcrypt password hashing, JWT authentication, and strict user-level ownership for datasets, analyses, and reports.
-- **Dataset Management & Preview**: Upload `.csv` and `.xlsx` datasets with file magic-byte verification, path-traversal protection, 10-row streaming preview, and mandatory/optional column mapping.
-- **Local ML Classification**: Uses a locally stored TF-IDF + Multinomial Logistic Regression + Cosine Similarity calibrated model (`server/ml/models/trained_model.json`) with configurable confidence threshold (`0.40` default) and zero external AI API calls.
-- **Potential New Complaint Group Discovery**: Automatically clusters low-confidence (`Review`) complaints using spherical KMeans and cosine similarity cohesion checks to surface emerging complaint themes for human review.
-- **Analytical Dashboard & Statistics**: Real-time progress polling, database-driven category summaries (excluding empty descriptions from percentages), distribution charts, and paginated/filterable result inspection.
-- **Excel & PDF Reporting**: Multi-worksheet Excel (`.xlsx`) reports with formula-injection protection, frozen headers, and filters; Landscape PDF (`.pdf`) reports with summary metrics, embedded vector horizontal bar charts, repeated table headers, and page numbers.
+## Linux Server Deployment Guide
 
-## Technology Stack
-
-- **Frontend**: React 19, Vite, Tailwind CSS, Axios, React Router DOM, Lucide React
-- **Backend**: Node.js (v22+), Express, TypeScript (`tsx`), JWT (`jsonwebtoken`), `bcryptjs`, `multer`, `csv-parse`, `xlsx`, `exceljs`, `pdfkit`
-- **Database**: SQLite (`node:sqlite`) with versioned SQL migrations (`schema_migrations`), foreign keys, and indexes
-
-## Prerequisites
-
-- Node.js v22 or higher
-- npm
-
-## Installation & Local Setup
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Set a strong random `JWT_SECRET` in `.env` before running in shared or production environments.
-3. Verify the trained ML model artifact exists at `server/ml/models/trained_model.json` (or regenerate it with `npx tsx server/ml/train_initial_model.ts`).
-4. Start the development server on port 3000:
-   ```bash
-   npm run dev
-   ```
-5. Open `http://localhost:3000` in your browser.
-
-## Running Tests & Verification
-
+### 1. Clone the Repository
 ```bash
-# Run backend & ML unit/integration tests
-npm test
+git clone <YOUR_GITHUB_REPO_URL>
+cd <YOUR_REPO_FOLDER>
 
-# Type-check TypeScript
-npm run lint
-
-# Build production frontend bundle
-npm run build
 ```
 
-## Documentation
+### 2. Configure Environment Variables
 
-- [User Manual](docs/user_manual.md)
-- [Deployment Manual](docs/deployment_manual.md)
-- [System Architecture](docs/system_architecture.md)
-- [API Documentation](docs/api_documentation.md)
-- [Database Documentation](docs/database_documentation.md)
+Copy the example environment file and set your values (the app uses port `3000` by default):
 
-## Known Limitations
+```bash
+cp .env.example .env
+nano .env
 
-- Background analysis tasks execute asynchronously inside the Node.js process (`setImmediate`); restarting the server mid-job marks interrupted jobs cleanly only if retried by the user.
-- For large multi-node deployments, replacing the local SQLite database with a centralized RDBMS and dedicated worker queue is recommended.
+```
+
+Make sure `PORT=3000` and any required API keys (such as `GEMINI_API_KEY`) are properly set, then save and exit.
+
+### 3. Install Dependencies & Build
+
+Using **Bun**:
+
+```bash
+bun install
+bun run build
+
+```
+
+*(Or using **npm / Node.js** if `package.json` defines `build` and `start` scripts:)*
+
+```bash
+npm install
+npm run build
+
+```
+
+### 4. Run the Application on Port 3000
+
+Start the server (adjust the start command if `package.json` specifies a custom `start` script):
+
+```bash
+bun run server.ts
+
+```
+
+*(Or if using Node/npm: `npm run start`)*
+
+To keep it running continuously in the background after closing the SSH session, run it under **PM2** or a **`systemd`** service:
+
+```bash
+pm2 start "bun run server.ts" --name complaint-app
+pm2 save
+
+```
+
+### 5. Optional: Expose via Nginx Reverse Proxy
+
+If you want to access the app over HTTP (`80`) or HTTPS (`443`) instead of `:3000` directly, configure Nginx to reverse-proxy to `http://127.0.0.1:3000`:
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain-or-server-ip;
+
+    location / {
+        proxy_pass [http://127.0.0.1:3000](http://127.0.0.1:3000);
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+```
+
+Test and reload Nginx:
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+
+```
+
+## Firewall Note
+
+If accessing port `3000` directly without Nginx, ensure port `3000` is open on the server/cloud firewall (e.g., `sudo ufw allow 3000`).
+
+```
+
+### Final 30-Second Wrap-Up
+1. Click **Copy** on the block above.
+2. Open `README.md` in your GitHub repo → click the **pencil icon** → press `Ctrl + A` → `Ctrl + V` → click **Commit changes**.
+3. Copy your repository URL from the browser address bar and send it to your teacher.
+
+<ElicitationsGroup message="If you want to double-check anything else in your repo before sending it:">
+  <Elicitation label="Verify package.json scripts" query="How do I check package.json on GitHub to confirm the exact build and start commands?"/>
+  <Elicitation label="Write message for teacher" query="Draft a short, professional message I can send my teacher along with the GitHub repository link."/>
+  <Elicitation label="Check docs folder" query="What should I check inside the docs folder that Google AI Studio generated?"/>
+</ElicitationsGroup>
+
+```
